@@ -6,6 +6,7 @@ documents to plain text by extracting text from each page as an image.
 from pdf2image import convert_from_path
 
 from .base import BaseConverter
+from .image_converter import ImageConverter
 
 
 class PDFConverter(BaseConverter):
@@ -18,7 +19,7 @@ class PDFConverter(BaseConverter):
         used to extract text from images of PDF pages.
     """
 
-    def __init__(self, image_converter):
+    def __init__(self, image_converter: ImageConverter):
         """
         Initialize the PDFConverter with a specified image converter.
         """
@@ -31,12 +32,9 @@ class PDFConverter(BaseConverter):
         try:
             images = convert_from_path(file_path)
             full_text = []
-
             for _, img in enumerate(images):
-                # Preprocess and extract text from each page image
                 text = self.image_converter.extract_text_from_image(img)
                 full_text.append(text)
-
             return "\n".join(full_text)
 
         except FileNotFoundError:

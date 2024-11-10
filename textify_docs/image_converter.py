@@ -44,49 +44,51 @@ class ImageConverter(BaseConverter):
         try:
             with Image.open(file_path) as img:
                 img = self.preprocess_image(img)
-                img_width, img_height = img.size
-                tables_crops = extract_tables_from_image(img, language=LANGUAGE)
-                table_bboxes = sorted(
-                    [table["bbox"] for table in tables_crops], key=lambda b: b[1]
-                )  # Sort by ymin
-                full_text = []
-                # Handle tables and gaps between them that contain simple plain textual data
-                previous_ymax = 0
-                for bbox, table_crop in zip(table_bboxes, tables_crops):
-                    ymin, ymax = bbox[1], bbox[3]
-                    # Extract text from the gap above the current table (doesn't contain tabular data theoritically)
-                    if ymin > previous_ymax:
-                        gap_bbox = (0, previous_ymax, img_width, ymin)
-                        img_crop = img.crop(gap_bbox)
-                        gap_text = pytesseract.image_to_string(
-                            img_crop, lang=LANGUAGE, config=TESSERACT_CONFIG_PLAIN_TEXT
-                        )
-                        full_text.append(gap_text)
-                    # Now add the textual data extracted from the table
-                    full_text.append(table_crop["table_text"])
-                    # Update previous ymax to the current table's ymax
-                    previous_ymax = ymax
-
-                # Handle the gap after the last table
-                if previous_ymax < img_height:
-                    gap_bbox = (0, previous_ymax, img_width, img_height)
-                    img_crop = img.crop(gap_bbox)
-                    gap_text = pytesseract.image_to_string(
-                        img_crop, lang=LANGUAGE, config=TESSERACT_CONFIG_PLAIN_TEXT
-                    )
-                    full_text.append(gap_text)
-
-                # full_text = "\n".join(full_text)
-                full_text = SEPARATOR.join(full_text)
-                # Remove unnecessary line breaks
-                full_text = "\n".join(
-                    line for line in full_text.splitlines() if line.strip()
-                )
-                # full_text = self.extract_text_from_image(img=img)
-                return full_text
+                text = self.extract_text_from_image(img)
+                return text
         except (FileNotFoundError, OSError) as e:
             print(f"An error occurred while converting the image to text: {e}")
             return None
+
+    def extract_text_from_image(self, img: Image):
+        img_width, img_height = img.size
+        tables_crops = extract_tables_from_image(img, language=LANGUAGE)
+        table_bboxes = sorted(
+            [table["bbox"] for table in tables_crops], key=lambda b: b[1]
+        )  # Sort by ymin
+        full_text = []
+        # Handle tables and gaps between them that contain simple plain textual data
+        previous_ymax = 0
+        for bbox, table_crop in zip(table_bboxes, tables_crops):
+            ymin, ymax = bbox[1], bbox[3]
+            # Extract text from the gap above the current table (doesn't contain tabular data theoritically)
+            if ymin > previous_ymax:
+                gap_bbox = (0, previous_ymax, img_width, ymin)
+                img_crop = img.crop(gap_bbox)
+                gap_text = pytesseract.image_to_string(
+                    img_crop, lang=LANGUAGE, config=TESSERACT_CONFIG_PLAIN_TEXT
+                )
+                full_text.append(gap_text)
+            # Now add the textual data extracted from the table
+            full_text.append(table_crop["table_text"])
+            # Update previous ymax to the current table's ymax
+            previous_ymax = ymax
+
+        # Handle the gap after the last table
+        if previous_ymax < img_height:
+            gap_bbox = (0, previous_ymax, img_width, img_height)
+            img_crop = img.crop(gap_bbox)
+            gap_text = pytesseract.image_to_string(
+                img_crop, lang=LANGUAGE, config=TESSERACT_CONFIG_PLAIN_TEXT
+            )
+            full_text.append(gap_text)
+
+        # full_text = "\n".join(full_text)
+        full_text = SEPARATOR.join(full_text)
+        # Remove unnecessary line breaks
+        full_text = "\n".join(line for line in full_text.splitlines() if line.strip())
+        # full_text = self.extract_text_from_image(img=img)
+        return full_text
 
     def preprocess_image(
         self,
