@@ -1,7 +1,7 @@
-# textify_docs
+# textify-docs
 
 
-**textify_docs** is a Python package designed to convert various document types (such as PDF, DOCX, and images) into plain text. This package supports preprocessing of images to enhance OCR (Optical Character Recognition) results and can handle multiple file types without needing to specify the document type manually.
+**textify-docs** is a Python package designed to convert various document types (such as PDF, DOCX, and images) into plain text. This package supports preprocessing of images to enhance OCR (Optical Character Recognition) results and can handle multiple file types without needing to specify the document type manually.
 
 ## Features
 
