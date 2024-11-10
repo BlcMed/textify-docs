@@ -61,16 +61,16 @@ def extract_tables_from_image_as_dict(image, language):
     for table_crop in tables_crops:
         table_image = table_crop["image"]
         cells_coordinates = recognize_table(table_image=table_image)
+        if cells_coordinates == []:
+            break
         table_data = _apply_ocr_to_cells(
             cells_coordinates=cells_coordinates,
             table_image=table_image,
             language=language,
         )  # dict
         tables.append({"table_dict": table_data, "bbox": table_crop["bbox"]})
-        print(
-            f"with {len(cells_coordinates)} row and "
-            f'{len(cells_coordinates[0]["cells"])} columns.'
-        )
+        print(f"With {len(cells_coordinates)} row and ")
+        print(f'{len(cells_coordinates[0]["cells"])} columns.')
     return tables
 
 
