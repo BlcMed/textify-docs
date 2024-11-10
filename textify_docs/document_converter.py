@@ -47,7 +47,7 @@ class DocumentConverter(BaseConverter):
         """
         file_extension = os.path.splitext(file_path)[1].lower()
         try:
-            return self.converters[file_extension](file_path)
+            return self.converters[file_extension].convert_to_text(file_path)
         except KeyError as exc:
             raise ValueError(f"Unsupported file type: {file_extension}.") from exc
 
@@ -55,13 +55,14 @@ class DocumentConverter(BaseConverter):
 if __name__ == "__main__":
     document_converter = DocumentConverter()
 
-    DOCUMENT_PATH = "./data/docx.docx"
-    text = document_converter.convert_to_text(DOCUMENT_PATH)
-    with open("./data/docx_text.txt", "w", encoding="utf-8") as file:
-        file.writelines(text)
+    def convert_and_save(path):
+        text = document_converter.convert_to_text(path)
+        print(text)
+        with open(path + ".txt", "w", encoding="utf-8") as file:
+            file.writelines(text)
 
+    DOCUMENT_PATH = "./data/docx.docx"
     XLSX_PATH = "./data/xlsx.xlsx"
-    text = document_converter.convert_to_text(XLSX_PATH)
-    print(text)
-    with open("./data/xlsx_text.txt", "w", encoding="utf-8") as file:
-        file.writelines(text)
+    PDF_PATH = "./data/example.pdf"
+
+    convert_and_save(path=PDF_PATH)
