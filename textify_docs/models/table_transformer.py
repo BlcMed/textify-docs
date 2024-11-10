@@ -22,7 +22,7 @@ def load_table_model(model_name, cache_dir=MODELS_PATH):
     # Use GPU if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = TableTransformerForObjectDetection.from_pretrained(
-        model_name, cache_dir=cache_dir
+        model_name  # , cache_dir=cache_dir
     ).to(device)
     model.eval()
     # Update id2label dictionary
