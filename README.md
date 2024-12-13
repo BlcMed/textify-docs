@@ -3,6 +3,8 @@
 
 **textify-docs** is a Python package designed to convert various document types (such as PDF, DOCX, and images) into plain text. This package supports preprocessing of images to enhance OCR (Optical Character Recognition) results and can handle multiple file types without needing to specify the document type manually.
 
+![Pipeline](assets/textify-docs_pipeline.png)
+
 ## Features
 
 - Convert PDFs, DOCX, and images to plain text.
@@ -44,3 +46,7 @@ sudo apt-get install -y tesseract-ocr
 brew install poppler
 brew install tesseract
 ```
+
+### References
+
+[PubTables-1M: Towards comprehensive table extraction from unstructured documents](https://openaccess.thecvf.com/content/CVPR2022/html/Smock_PubTables-1M_Towards_Comprehensive_Table_Extraction_From_Unstructured_Documents_CVPR_2022_paper.html)
